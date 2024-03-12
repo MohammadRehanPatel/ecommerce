@@ -5,7 +5,7 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/product/${5}`)}
+      onClick={() => navigate(`/product/${product.id}`)}
       className="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-80 m-2 transition-all cursor-pointer hover:shadow-lg "
     >
       <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border hover:shadow-lg rounded-xl h-80">

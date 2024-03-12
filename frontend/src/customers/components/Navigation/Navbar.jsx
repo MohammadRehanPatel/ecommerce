@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -6,8 +6,14 @@ import {
   ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { navigation } from "../../../config/navigationData";
-import { useNavigate } from "react-router-dom";
+import { navigation } from "./navigationData";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Avatar, Button, Menu, MenuItem } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
+import AuthModel from "../../Auth/AuthModel";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { getUser, logout } from "../../../State/Auth/Action";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -15,11 +21,54 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [openAuthModel, setOpenAuthModel] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
+
+  const { auth } = useSelector((store) => store);
+
+  const handleUserClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseUserMenu = (event) => {
+    setAnchorEl(null);
+  };
+
+  const handleOpen = () => {
+    setOpenAuthModel(true);
+  };
+
+  const handleClose = () => {
+    setOpenAuthModel(false);
+    navigate("/");
+  };
   const handleCategoryClick = (category, section, item, close) => {
     navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
   };
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseUserMenu();
+  };
+
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt));
+    }
+  }, [jwt, auth.jwt]);
+
+  useEffect(() => {
+    if (auth.user) {
+      handleClose();
+    }
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      navigate(-1);
+    }
+  }, [auth.user]);
 
   return (
     <div className="bg-white ">
@@ -237,7 +286,7 @@ export default function Navbar() {
                 <div className="flex h-full space-x-8">
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className="flex">
-                      {({ open }) => (
+                      {({ open, close }) => (
                         <>
                           <div className="relative flex">
                             <Popover.Button
@@ -365,19 +414,56 @@ export default function Navbar() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Sign in
-                  </a>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Create account
-                  </a>
+                  {auth.user?.firstName ? (
+                    <div className="">
+                      <Avatar
+                        className="text-white"
+                        onClick={handleUserClick}
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        sx={{
+                          bgcolor: deepPurple[500],
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {auth.user?.firstName[0].toUpperCase()}
+                      </Avatar>
+                      {/* <Button
+                      id="basic-button"
+                      onClick={handleUserClick}
+                      aria-controls={open?"basic-menu":undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open? "true":undefined}
+                      >
+                        DashBoard
+                      </Button> */}
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={openUserMenu}
+                        onClose={handleCloseUserMenu}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem onClick={handleCloseUserMenu}>
+                          Profile
+                        </MenuItem>
+
+                        <MenuItem>My Orders</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                      </Menu>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={handleOpen}
+                      className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    >
+                      Signin
+                    </Button>
+                  )}
                 </div>
 
                 {/* Search */}
@@ -409,6 +495,8 @@ export default function Navbar() {
           </div>
         </nav>
       </header>
+
+      <AuthModel handleClose={handleClose} open={openAuthModel} />
     </div>
   );
 }

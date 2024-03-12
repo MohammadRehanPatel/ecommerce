@@ -10,7 +10,7 @@ export const filters = [
       },
       {
         value: "white",
-        label: "Yellow",
+        label: "White",
         class: "bg-yellow-400 text-yellow-400",
       },
       {
@@ -20,8 +20,8 @@ export const filters = [
       },
       {
         value: "brown",
-        label: "Purple",
-        class: "bg-purple-400 text-purple-400",
+        label: "Brown",
+        class: "bg-brown-400 text-brown-400",
       },
       {
         value: "green",
@@ -29,9 +29,19 @@ export const filters = [
         class: "bg-green-400 text-green-400",
       },
       {
-        value: "purple",
+        value: "red",
         label: "Red",
         class: "bg-red-400 text-red-400",
+      },
+      {
+        value: "yellow",
+        label: "Yellow",
+        class: "bg-yellow-400 text-yellow-400",
+      },
+      {
+        value: "purple",
+        label: "Purple",
+        class: "bg-purple-400 text-purple-400",
       },
     ],
   },

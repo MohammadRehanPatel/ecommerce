@@ -9,6 +9,8 @@ import ProductDetails from "../customers/components/ProductDetails/ProductDetail
 import Checkout from "../customers/components/Checkout/Checkout";
 import Order from "../customers/components/Order/Order";
 import OrderDetails from "../customers/components/Order/OrderDetails";
+import AuthModel from "../customers/Auth/AuthModel";
+import PaymentSuccess from "../customers/components/Payment/PaymentSuccess";
 
 const CustomerRouters = () => {
   return (
@@ -17,6 +19,8 @@ const CustomerRouters = () => {
         <Navbar />
       </div>
       <Routes>
+        <Route path="/login" element={<HomePage />} />
+        <Route path="/register" element={<HomePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/:levelOne/:levelTwo/:levelThree" element={<Product />} />
@@ -24,6 +28,7 @@ const CustomerRouters = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/account/order" element={<Order />} />
         <Route path="/account/order/:orderId" element={<OrderDetails />} />
+        <Route path="/payment/:orderId" element={<PaymentSuccess />} />
 
         {/* <Checkout /> */}
         {/* <Order /> */}
