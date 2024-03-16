@@ -30,6 +30,7 @@ const AddDeliveryAddressForm = () => {
     <div>
       <Grid container spacing={4}>
         <Grid
+          item
           xs={12}
           lg={5}
           className="border rounded-e-md shadow-md h-[30.5rem] overflow-y-scroll "

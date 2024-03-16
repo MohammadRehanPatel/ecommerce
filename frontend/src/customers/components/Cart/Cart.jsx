@@ -14,7 +14,7 @@ const Cart = () => {
 
   const handleCheckOut = () => {
     navigate("/checkout?step=2");
-    dispatch(createPayment(orderId));
+    console.log("Cart click checkout");
   };
 
   useEffect(() => {

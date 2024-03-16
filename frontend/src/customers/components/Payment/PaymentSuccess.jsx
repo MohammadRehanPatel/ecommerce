@@ -16,17 +16,20 @@ const PaymentSuccess = () => {
   const dispatch = useDispatch();
   const { order } = useSelector((store) => store);
 
+  console.log("order after paymnet", order);
   useEffect(() => {
     const urlParam = new URLSearchParams(window.location.search);
 
-    setPaymentId(urlParam.get("razorpay_payment_link_id"));
+    setPaymentId(urlParam.get("razorpay_payment_id"));
     setPaymentStatus(urlParam.get("razorpay_payment_link_status"));
   }, []);
 
   useEffect(() => {
-    const data = { orderId, paymentId };
-    dispatch(getOrderById(orderId));
-    dispatch(updatePayment(data));
+    if (paymentId) {
+      const data = { orderId, paymentId };
+      dispatch(getOrderById(orderId));
+      // dispatch(updatePayment(data));
+    }
   }, [orderId, paymentId]);
 
   return (
@@ -45,7 +48,7 @@ const PaymentSuccess = () => {
       <OrderTracker activeStep={1} />
 
       <Grid container className="space-y-5 py-5 pt-20">
-        {[1, 2, 2].map((item) => (
+        {order.order?.orderItems.map((item) => (
           <Grid
             container
             item
@@ -56,22 +59,22 @@ const PaymentSuccess = () => {
               <div className="flex items-center">
                 <img
                   className="w-[5rem] h-[5rem] object-cover object-top"
-                  src="https://rukminim1.flixcart.com/image/612/612/kxkqavk0/kurta/l/w/t/xxl-vlsd-a0lt-vida-loca-original-imagay8hcrqax2uv.jpeg?q=70"
+                  src={item.product.imageUrl}
                   alt=""
                 />
                 <div className="ml-5 space-y-2">
-                  <p>item.product.title</p>
+                  <p>{item.product.title}</p>
                   <div className="opacity-50 text-xs font-semibold space-x-5">
-                    <span>Color : item.color</span>
-                    <span>Size : item.size</span>
+                    <span>Color : {item.color}</span>
+                    <span>Size : {item.size}</span>
                   </div>
-                  <p>Seller : item.product.brand</p>
-                  <p>Price : ₹ item.price</p>
+                  <p>Seller : {item.product.brand}</p>
+                  <p>Price : ₹ {item.price}</p>
                 </div>
               </div>
             </Grid>
             <Grid item>
-              <AddressCard address={""} />
+              <AddressCard address={order.order?.shippingAddress} />
             </Grid>
           </Grid>
         ))}

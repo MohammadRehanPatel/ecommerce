@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class PaymentController {
-    @Value("razorpay.api.key")
+
+    @Value("${razorpay.api.key}")
     String apiKey;
 
-    @Value("razorpay.api.secret")
+    @Value("${razorpay.api.secret}")
     String apiSecret;
+
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -60,7 +62,6 @@ public class PaymentController {
 
             paymentLinkRequest.put("callback_url","http://localhost:5173/payment/"+orderId);
             paymentLinkRequest.put("callback_method","get");
-
             PaymentLink payment = razorpay.paymentLink.create(paymentLinkRequest);
 
             String paymentLinkId=payment.get("id");
@@ -69,10 +70,11 @@ public class PaymentController {
             PaymentLinkResponse res= new PaymentLinkResponse();
             res.setPayment_link_id(paymentLinkId);
             res.setPayment_link_url(paymentLinkUrl);
-
+            System.out.println(res);
             return new ResponseEntity<PaymentLinkResponse>(res, HttpStatus.CREATED);
 
         }catch (Exception e){
+            System.out.println("Error in post");
         throw new RazorpayException(e.getMessage());
         }
 
@@ -80,9 +82,12 @@ public class PaymentController {
     }
     @GetMapping("/payments")
     public ResponseEntity<ApiResponse> redirect(@RequestParam(name = "payment_id") String paymentId,
-                                                @RequestParam(name = "orderId") Long orderId) throws OrderException, RazorpayException {
+                                                @RequestParam(name = "order_id") Long orderId) throws OrderException, RazorpayException {
         Order order=orderService.findOrderById(orderId);
         RazorpayClient razorpay = new RazorpayClient(apiKey,apiSecret);
+
+        System.out.println("PAyment ID " +paymentId);
+        System.out.println("Order ID " +orderId);
         try {
             Payment payment = razorpay.payments.fetch(paymentId);
             if(payment.get("status").equals("captured")){

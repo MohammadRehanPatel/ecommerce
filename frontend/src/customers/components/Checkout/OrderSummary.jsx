@@ -29,7 +29,7 @@ const OrderSummary = () => {
       <div className="p-5 shadow-lg rounded-md border">
         <AddressCard address={order.order?.shippingAddress} />
       </div>
-      <Cart />
+      {/* <Cart /> */}
 
       <div>
         <div className="lg:grid grid-cols-3  relative">
